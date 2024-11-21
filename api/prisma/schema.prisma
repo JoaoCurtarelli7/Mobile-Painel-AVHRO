@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Donor {
+  id               Int                @id @default(autoincrement())
+  name             String?
+  cpf              String?
+  dateRegistration DateTime?
+  DonationReceived DonationReceived[]
+}
+
+model Donatary {
+  id                Int                 @id @default(autoincrement())
+  name              String?
+  cpf               String?
+  dateRegistration  DateTime?
+  DonationDelivered DonationDelivered[]
+}
+
+model Family {
+  id               Int       @id @default(autoincrement())
+  name             String?
+  numberMembers    Int?
+  dateRegistration DateTime?
+  bairro           String?
+}
+
+model DonationDelivered {
+  id         Int      @id @default(autoincrement())
+  item       String
+  date       DateTime
+  donatary   Donatary @relation(fields: [donataryId], references: [id])
+  donataryId Int
+}
+
+model DonationReceived {
+  id      Int      @id @default(autoincrement())
+  item    String
+  date    DateTime
+  donor   Donor    @relation(fields: [donorId], references: [id])
+  donorId Int
+}
+
+model User {
+  id               Int      @id @default(autoincrement())
+  name             String
+  email            String   @unique
+  password         String
+  isAdmin          Boolean  @default(false)
+  dateRegistration DateTime @default(now())
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  quantity    Int
+  dateAdded   DateTime @default(now())
+}
